@@ -32,11 +32,18 @@ static int delayCentisecondsForImageAtIndex(CGImageSourceRef const source, size_
         CFRelease(properties);
         if (gifProperties) {
             // kCGImagePropertyGIFUnclampedDelayTime appears to be what should be used instead of kCGImagePropertyGIFDelayTime JG 5/1/2013
-            CFNumberRef const number = CFDictionaryGetValue(gifProperties, kCGImagePropertyGIFUnclampedDelayTime);
-            
+            CFNumberRef number = CFDictionaryGetValue(gifProperties, kCGImagePropertyGIFUnclampedDelayTime);
+
+            if ([fromCF number doubleValue] == 0) {
+                number = CFDictionaryGetValue(gifProperties, kCGImagePropertyGIFDelayTime);
+            }
+
             // Even though the GIF stores the delay as an integer number of centiseconds, ImageIO “helpfully” converts that to seconds for us.
             delayCentiseconds = (int)lrint([fromCF number doubleValue] * 100.0);
         }
+    }
+    if (delayCentiseconds == 0) {
+        delayCentiseconds = 10;
     }
     return delayCentiseconds;
 }

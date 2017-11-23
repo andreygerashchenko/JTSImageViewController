@@ -8,6 +8,7 @@
 
 #import "JTSImageViewController.h"
 
+#import "JTSAnimatedGIFUtility.h"
 #import "JTSSimpleImageDownloader.h"
 #import "UIImage+JTSImageEffects.h"
 #import "UIApplication+JTSImageViewController.h"
@@ -388,9 +389,9 @@ typedef struct {
 - (void)setupImageAndDownloadIfNecessary:(JTSImageInfo *)imageInfo {
     if (imageInfo.image) {
         self.image = imageInfo.image;
-    }
-    else {
-        
+    } else if (imageInfo.gifData) {
+        self.image = [JTSAnimatedGIFUtility animatedImageWithAnimatedGIFData:imageInfo.gifData];
+    } else {
         self.image = imageInfo.placeholderImage;
         
         BOOL fromDisk = [imageInfo.imageURL.absoluteString hasPrefix:@"file://"];
